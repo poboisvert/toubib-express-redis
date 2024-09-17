@@ -1,0 +1,54 @@
+{
+  "name": "js-crash-course",
+  "version": "0.0.1",
+  "description": "Node.js Crash Course for Redis",
+  "main": "src/server.js",
+  "scripts": {
+    "auth": "node ./src/auth.js",
+    "dev": "node ./node_modules/nodemon/bin/nodemon.js",
+    "lint": "node ./node_modules/eslint/bin/eslint.js src",
+    "load": "node src/utils/dataloader.js --",
+    "checkingenerator": "node ./src/checkingenerator.js",
+    "checkingroupprocessor": "node ./src/checkingroupprocessor.js",
+    "checkinprocessor": "node ./src/checkinprocessor.js --",
+    "checkinreceiver": "node ./src/checkinreceiver.js",
+    "start": "node ./src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redislabs-training/node-js-crash-course.git"
+  },
+  "keywords": [
+    "Redis"
+  ],
+  "author": "Redis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/redislabs-training/node-js-crash-course/issues"
+  },
+  "homepage": "https://github.com/redislabs-training/node-js-crash-course#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "better-config": "^1.2.3",
+    "connect-redis": "^5.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "express-validator": "^6.10.0",
+    "ioredis": "^4.22.0",
+    "morgan": "^1.10.0",
+    "node-fetch": "^2.6.1",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/eslint-parser": "^7.15.8",
+    "eslint": "^7.20.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "nodemon": "^2.0.7"
+  }
+}

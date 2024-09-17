@@ -1,0 +1,238 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "Jan's Place",
+      "category": "cafe",
+      "location": "-122.193849,38.10476999999999",
+      "numLikes": 1,
+      "averageStars": 1,
+      "numStars": 1
+    },
+    {
+      "id": 2,
+      "name": "Luigi's",
+      "category": "restaurant",
+      "location": "-122.059762,37.593981",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 3,
+      "name": "The Half Moon",
+      "category": "bar",
+      "location": "-122.091054,37.70382",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 4,
+      "name": "Rise and Shine Breakfast",
+      "category": "hair",
+      "location": "-122.076775,37.689189",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 5,
+      "name": "Dine at Nine",
+      "category": "cafe",
+      "location": "-121.976451,37.562256",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 6,
+      "name": "The Coffee Spot",
+      "category": "cafe",
+      "location": "-122.123456,37.123456",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 7,
+      "name": "Pasta Paradise",
+      "category": "bar",
+      "location": "-122.654321,37.654321",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 8,
+      "name": "The Happy Hour",
+      "category": "bar",
+      "location": "-122.987654,37.987654",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 9,
+      "name": "Sunrise Diner",
+      "category": "cafe",
+      "location": "-122.111111,37.222222",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 10,
+      "name": "Steakhouse Supreme",
+      "category": "restaurant",
+      "location": "-122.222222,37.333333",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 11,
+      "name": "Brewed Awakenings",
+      "category": "cafe",
+      "location": "-122.333333,37.444444",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 12,
+      "name": "Taco Town",
+      "category": "restaurant",
+      "location": "-122.444444,37.555555",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 13,
+      "name": "The Chill Bar",
+      "category": "bar",
+      "location": "-122.555555,37.666666",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 14,
+      "name": "Bagel Bliss",
+      "category": "cafe",
+      "location": "-122.666666,37.777777",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 15,
+      "name": "Sushi Central",
+      "category": "restaurant",
+      "location": "-122.777777,37.888888",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 16,
+      "name": "The Wine Cellar",
+      "category": "bar",
+      "location": "-122.888888,37.999999",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 17,
+      "name": "Pancake Palace",
+      "category": "cafe",
+      "location": "-122.999999,38.111111",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 18,
+      "name": "Burger Haven",
+      "category": "restaurant",
+      "location": "-123.000000,38.222222",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 19,
+      "name": "The Sports Bar",
+      "category": "bar",
+      "location": "-123.111111,38.333333",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 20,
+      "name": "Dessert Delight",
+      "category": "cafe",
+      "location": "-123.222222,38.444444",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 21,
+      "name": "Pizza Paradise",
+      "category": "restaurant",
+      "location": "-123.333333,38.555555",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 22,
+      "name": "The Cozy Corner",
+      "category": "bar",
+      "location": "-123.444444,38.666666",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 23,
+      "name": "Smoothie Station",
+      "category": "cafe",
+      "location": "-123.555555,38.777777",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 24,
+      "name": "Curry House",
+      "category": "restaurant",
+      "location": "-123.666666,38.888888",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 25,
+      "name": "The Nightcap",
+      "category": "bar",
+      "location": "-123.777777,38.999999",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    },
+    {
+      "id": 26,
+      "name": "Gourmet Grub",
+      "category": "cafe",
+      "location": "-123.888888,39.000000",
+      "numLikes": 1,
+      "numStars": 1,
+      "averageStars": 1
+    }
+  ]
+}

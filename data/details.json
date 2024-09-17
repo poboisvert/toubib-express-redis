@@ -1,0 +1,124 @@
+{
+  "details": [
+    {
+      "id": 1,
+      "website": "www.jansplace.com",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed facilisis augue ornare metus fermentum aliquet. Suspendisse dapibus ullamcorper congue. Nunc scelerisque aliquam sapien ut placerat. Vestibulum enim diam, vehicula vel mi in, sagittis feugiat leo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec mollis, neque eu mollis maximus, augue turpis efficitur nulla, vel viverra nisl neque et risus. Proin eget nunc a lorem viverra semper. Mauris sodales tempor velit. Sed sit amet ligula faucibus, auctor nisi ac, pharetra diam. Sed posuere diam ligula, imperdiet ullamcorper lectus rhoncus quis. Pellentesque pulvinar fringilla odio sit amet gravida. Curabitur placerat lorem id lorem elementum, in lobortis purus ornare. Pellentesque aliquet, sem a auctor hendrerit, ante diam egestas nibh, quis volutpat neque metus viverra magna. Aliquam scelerisque, turpis quis scelerisque consequat, lorem odio scelerisque tortor, a facilisis augue eros ut diam.",
+      "phone": "(871) 541-3860"
+    },
+    {
+      "id": 2,
+      "website": "www.luigis.com",
+      "description": "A cozy restaurant offering a variety of Italian dishes, perfect for family gatherings and special occasions.",
+      "phone": "(123) 456-7890"
+    },
+    {
+      "id": 3,
+      "website": "www.thehalfmoon.com",
+      "description": "A vibrant bar with a lively atmosphere, serving craft cocktails and local beers.",
+      "phone": "(234) 567-8901"
+    },
+    {
+      "id": 4,
+      "website": "www.riseandshine.com",
+      "description": "Start your day with a delicious breakfast at our cafe, known for its fresh ingredients and friendly service.",
+      "phone": "(345) 678-9012"
+    },
+    {
+      "id": 5,
+      "website": "www.dineatnine.com",
+      "description": "An upscale dining experience featuring seasonal menus and an extensive wine list.",
+      "phone": "(456) 789-0123"
+    },
+    {
+      "id": 6,
+      "website": "www.bistroparis.com",
+      "description": "A charming bistro offering authentic French cuisine in a romantic setting.",
+      "phone": "(567) 890-1234"
+    },
+    {
+      "id": 7,
+      "website": "www.sushihaven.com",
+      "description": "A sushi restaurant that prides itself on fresh fish and traditional Japanese techniques.",
+      "phone": "(678) 901-2345"
+    },
+    {
+      "id": 8,
+      "website": "www.pizzaparlor.com",
+      "description": "A family-friendly pizzeria known for its hand-tossed crust and variety of toppings.",
+      "phone": "(789) 012-3456"
+    },
+    {
+      "id": 9,
+      "website": "www.tacotown.com",
+      "description": "A casual eatery specializing in authentic Mexican tacos and street food.",
+      "phone": "(890) 123-4567"
+    },
+    {
+      "id": 10,
+      "website": "www.icecreamparlor.com",
+      "description": "A delightful ice cream shop offering a wide range of flavors and toppings.",
+      "phone": "(901) 234-5678"
+    },
+    {
+      "id": 11,
+      "website": "www.vegetarianbistro.com",
+      "description": "A vegetarian restaurant that serves delicious plant-based dishes in a cozy atmosphere.",
+      "phone": "(012) 345-6789"
+    },
+    {
+      "id": 12,
+      "website": "www.seafoodshack.com",
+      "description": "A seafood restaurant with a casual vibe, known for its fresh catches and waterfront views.",
+      "phone": "(123) 456-7891"
+    },
+    {
+      "id": 13,
+      "website": "www.burgersandfries.com",
+      "description": "A classic burger joint serving juicy burgers and crispy fries in a fun environment.",
+      "phone": "(234) 567-8902"
+    },
+    {
+      "id": 14,
+      "website": "www.coffeecorner.com",
+      "description": "A local coffee shop that offers artisanal brews and a selection of pastries.",
+      "phone": "(345) 678-9013"
+    },
+    {
+      "id": 15,
+      "website": "www.pastaheaven.com",
+      "description": "An Italian restaurant specializing in homemade pasta and traditional sauces.",
+      "phone": "(456) 789-0124"
+    },
+    {
+      "id": 16,
+      "website": "www.grillhouse.com",
+      "description": "A steakhouse known for its prime cuts of meat and extensive wine selection.",
+      "phone": "(567) 890-1235"
+    },
+    {
+      "id": 17,
+      "website": "www.bakerydelight.com",
+      "description": "A bakery offering freshly baked goods, from bread to pastries, made daily.",
+      "phone": "(678) 901-2346"
+    },
+    {
+      "id": 18,
+      "website": "www.healthymeals.com",
+      "description": "A health-focused restaurant serving nutritious meals made from organic ingredients.",
+      "phone": "(789) 012-3457"
+    },
+    {
+      "id": 19,
+      "website": "www.foodtruckfiesta.com",
+      "description": "A food truck offering a rotating menu of gourmet street food at various locations.",
+      "phone": "(890) 123-4568"
+    },
+    {
+      "id": 20,
+      "website": "www.wineanddine.com",
+      "description": "A fine dining restaurant with a focus on wine pairings and seasonal dishes.",
+      "phone": "(901) 234-5679"
+    }
+  ]
+}
