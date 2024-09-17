@@ -5,6 +5,9 @@ import { inter } from "@/app/ui/fonts";
 import { LatestInvoicesSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
 
+export const dynamicParams = true;
+// Next.js will invalidate the cache when a
+// request comes in, at most once every 0 seconds.
 export const revalidate = 0;
 
 export default async function Page() {
