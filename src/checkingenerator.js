@@ -14,7 +14,7 @@ const generateCheckin = async () => {
   const checkin = {
     userId: randomInRange(1, 1000),
     itemId: randomInRange(1, 20),
-    starRating: randomInRange(0, 5),
+    starRating: randomInRange(0, 4),
   };
 
   const response = await fetch(CHECKIN_RECEIVER_URL, {
@@ -25,7 +25,7 @@ const generateCheckin = async () => {
 
   if (response.status === 202) {
     logger.info(
-      `Generated checkin for user ${checkin.userId} at location ${checkin.itemId} with rating ${checkin.starRating}.`
+      `Generated checkin for user ${checkin.userId} at location ${checkin.itemId} with vote ${checkin.starRating}.`
     );
   } else {
     logger.error(`${response.status} error recording checkin.`);

@@ -2,8 +2,6 @@ const bcrypt = require('bcrypt');
 const config = require('better-config');
 const express = require('express');
 const { body } = require('express-validator');
-const session = require('express-session');
-const RedisStore = require('connect-redis')(session);
 const morgan = require('morgan');
 const cors = require('cors');
 const logger = require('./utils/logger');
@@ -11,7 +9,16 @@ const apiErrorReporter = require('./utils/apierrorreporter');
 
 config.set(`../${process.env.CRASH_COURSE_CONFIG_FILE || 'config.json'}`);
 
+const session = require('express-session');
+const RedisStore = require("connect-redis").default
 const redis = require('./utils/redisclient');
+
+
+// Initialize store.
+let redisStore = new RedisStore({
+  client: redis.getClient(),
+  prefix: redis.getKeyName(`${config.session.keyPrefix}:`),
+})
 
 const app = express();
 app.use(morgan('combined', { stream: logger.stream }));
@@ -19,10 +26,7 @@ app.use(cors());
 app.use(express.json());
 app.use(session({
   secret: config.session.secret,
-  store: new RedisStore({
-    client: redis.getClient(),
-    prefix: redis.getKeyName(`${config.session.keyPrefix}:`),
-  }),
+  store: redisStore,
   name: config.session.appName,
   resave: false,
   saveUninitialized: true,

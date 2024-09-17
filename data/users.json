@@ -6,7 +6,7 @@
       "lastName": "Çetin",
       "email": "kubra.cetin@example.com",
       "password": "tricky",
-      "numLikes": 5912,
+      "numVotes": 5912,
       "lastCheckin": 1609011844870,
       "lastSeenAt": 69
     },
@@ -16,7 +16,7 @@
       "lastName": "رضایی",
       "email": "nyysh.rdyy@example.com",
       "password": "trip",
-      "numLikes": 7718,
+      "numVotes": 7718,
       "lastCheckin": 1435058271369,
       "lastSeenAt": 158
     },
@@ -26,7 +26,7 @@
       "lastName": "احمدی",
       "email": "awyn.hmdy@example.com",
       "password": "spock",
-      "numLikes": 336,
+      "numVotes": 336,
       "lastCheckin": 1453259049953,
       "lastSeenAt": 183
     },
@@ -36,7 +36,7 @@
       "lastName": "Johnston",
       "email": "priscilla.johnston@example.com",
       "password": "kristine",
-      "numLikes": 3647,
+      "numVotes": 3647,
       "lastCheckin": 1596088934361,
       "lastSeenAt": 58
     },
@@ -46,7 +46,7 @@
       "lastName": "Reyes",
       "email": "alejandro.reyes@example.com",
       "password": "arlene",
-      "numLikes": 8583,
+      "numVotes": 8583,
       "lastCheckin": 1517699726951,
       "lastSeenAt": 155
     },
@@ -56,7 +56,7 @@
       "lastName": "Nicolas",
       "email": "alessia.nicolas@example.com",
       "password": "skidoo",
-      "numLikes": 3568,
+      "numVotes": 3568,
       "lastCheckin": 1525623041775,
       "lastSeenAt": 120
     },
@@ -66,7 +66,7 @@
       "lastName": "Korsvold",
       "email": "jasmine.korsvold@example.com",
       "password": "sculled",
-      "numLikes": 5739,
+      "numVotes": 5739,
       "lastCheckin": 1425795466168,
       "lastSeenAt": 181
     },
@@ -76,7 +76,7 @@
       "lastName": "قاسمی",
       "email": "myrmhmd.qsmy@example.com",
       "password": "nature",
-      "numLikes": 6921,
+      "numVotes": 6921,
       "lastCheckin": 1609165395302,
       "lastSeenAt": 203
     },
@@ -86,7 +86,7 @@
       "lastName": "Pereira",
       "email": "milo.pereira@example.com",
       "password": "crave",
-      "numLikes": 5653,
+      "numVotes": 5653,
       "lastCheckin": 1517663220971,
       "lastSeenAt": 87
     },
@@ -96,7 +96,7 @@
       "lastName": "Lewis",
       "email": "evie.lewis@example.com",
       "password": "ladder",
-      "numLikes": 813,
+      "numVotes": 813,
       "lastCheckin": 1430478096135,
       "lastSeenAt": 97
     },
@@ -106,7 +106,7 @@
       "lastName": "Duran",
       "email": "ricardo.duran@example.com",
       "password": "delaney",
-      "numLikes": 1635,
+      "numVotes": 1635,
       "lastCheckin": 1605183246731,
       "lastSeenAt": 130
     },
@@ -116,7 +116,7 @@
       "lastName": "Sieben",
       "email": "franziska.sieben@example.com",
       "password": "admin",
-      "numLikes": 8945,
+      "numVotes": 8945,
       "lastCheckin": 1490641385511,
       "lastSeenAt": 22
     },
@@ -126,7 +126,7 @@
       "lastName": "Hughes",
       "email": "jack.hughes@example.com",
       "password": "access",
-      "numLikes": 6766,
+      "numVotes": 6766,
       "lastCheckin": 1602989337996,
       "lastSeenAt": 168
     },

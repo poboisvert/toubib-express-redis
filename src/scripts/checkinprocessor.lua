@@ -17,13 +17,14 @@ if ((currentLastCheckin == false or currentLastCheckin == nil)) or (tonumber(che
     redis.call('hset', userKey, 'lastCheckin', checkinTimestamp, 'lastSeenAt', checkinLocationId)
 end
 
--- Increment the user's numLikes and the location's numLikes.
-redis.call('hincrby', userKey, 'numLikes', 1)
-local locationNumLikes = redis.call('hincrby', itemKey, 'numLikes', 1)
+-- Increment the user's numVotes and the location's numVotes.
+redis.call('hincrby', userKey, 'numVotes', 1)
+local locationNumVotes = redis.call('hincrby', itemKey, 'numVotes', 1)
 
 -- Update the location's total star count.
 local locationNumStars = redis.call('hincrby', itemKey, 'numStars', tonumber(checkinStarRating))
 
 -- Calculate and store the location's new average star count.
-local newAverageStars = math.floor((locationNumStars / locationNumLikes) + 0.5)
+local newAverageStars = math.floor((locationNumStars / locationNumVotes) + 0.5)
 redis.call('hset', itemKey, 'averageStars', tonumber(newAverageStars))
+redis.call('hset', itemKey, 'lastUpdated', checkinTimestamp)

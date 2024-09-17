@@ -11,7 +11,7 @@ const CONSUMER_GROUP_NAME = "checkinConsumers";
 
 const usage = () => {
   console.error(
-    "Usage: npm run load users|items|details|likes|indexes|bloom|all"
+    "Usage: npm run load users|items|details|votes|indexes|bloom|all"
   );
   process.exit(0);
 };
@@ -92,14 +92,14 @@ const loadDetails = async () => {
   console.log(`Location detail data loaded with ${errorCount} errors.`);
 };
 
-const loadLikes = async () => {
+const loadVotes = async () => {
   console.log("Loading checkin stream entries...");
 
   /* eslint-disable global-require */
-  const { likes } = require("../../data/likes.json");
+  const { votes } = require("../../data/votes.json");
   /* eslint-enable */
 
-  const streamKeyName = redis.getKeyName("likes");
+  const streamKeyName = redis.getKeyName("votes");
 
   // Delete any previous stream.
   await redisClient.del(streamKeyName);
@@ -110,7 +110,7 @@ const loadLikes = async () => {
 
   /* eslint-disable no-await-in-loop */
   do {
-    const checkin = likes[n];
+    const checkin = votes[n];
     pipeline.xadd(
       streamKeyName,
       checkin.id,
@@ -130,7 +130,7 @@ const loadLikes = async () => {
       // Start a fresh pipeline.
       pipeline = redisClient.pipeline();
     }
-  } while (n < likes.length);
+  } while (n < votes.length);
   /* eslint-enable */
 
   // Send any remaining checkins if the number of checkins in the
@@ -155,11 +155,11 @@ const createIndexes = async () => {
   console.log("Dropping any existing indexes, creating new indexes...");
 
   const usersIndexKey = redis.getKeyName("usersidx");
-  const locationsIndexKey = redis.getKeyName("locationsidx");
+  const itemsIndexKey = redis.getKeyName("itemsidx");
 
   const pipeline = redisClient.pipeline();
   pipeline.call("FT.DROPINDEX", usersIndexKey);
-  pipeline.call("FT.DROPINDEX", locationsIndexKey);
+  pipeline.call("FT.DROPINDEX", itemsIndexKey);
   pipeline.call(
     "FT.CREATE",
     usersIndexKey,
@@ -171,7 +171,7 @@ const createIndexes = async () => {
     "SCHEMA",
     "email",
     "TAG",
-    "numLikes",
+    "numVotes",
     "NUMERIC",
     "SORTABLE",
     "lastSeenAt",
@@ -187,12 +187,12 @@ const createIndexes = async () => {
   );
   pipeline.call(
     "FT.CREATE",
-    locationsIndexKey,
+    itemsIndexKey,
     "ON",
     "HASH",
     "PREFIX",
     "1",
-    redis.getKeyName("locations"),
+    redis.getKeyName("items"),
     "SCHEMA",
     "category",
     "TAG",
@@ -200,7 +200,7 @@ const createIndexes = async () => {
     "location",
     "GEO",
     "SORTABLE",
-    "numLikes",
+    "numVotes",
     "NUMERIC",
     "SORTABLE",
     "numStars",
@@ -263,8 +263,8 @@ const runDataLoader = async (params) => {
     case "locationdetails":
       await loadDetails();
       break;
-    case "likes":
-      await loadLikes();
+    case "votes":
+      await loadVotes();
       break;
     case "indexes":
       await createIndexes();
@@ -276,7 +276,7 @@ const runDataLoader = async (params) => {
       await loadUsers();
       await loadItems();
       await loadDetails();
-      await loadLikes();
+      await loadVotes();
       await createIndexes();
       await createBloomFilter();
       break;

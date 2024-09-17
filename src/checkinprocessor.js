@@ -4,7 +4,7 @@ const sleep = require("./utils/sleep");
 
 const runCheckinProcessor = async () => {
   const redisClient = redis.getClient();
-  const checkinStreamKey = redis.getKeyName("likes");
+  const votesStreamKey = redis.getKeyName("votes");
   const checkinProcessorIdKey = redis.getKeyName("checkinprocessor", "lastid");
   const delay = process.argv[3] === "delay";
 
@@ -26,7 +26,7 @@ const runCheckinProcessor = async () => {
       "BLOCK",
       "5000",
       "STREAMS",
-      checkinStreamKey,
+      votesStreamKey,
       lastIdRead
     );
     /* eslint-enable */
@@ -71,8 +71,8 @@ const runCheckinProcessor = async () => {
         "lastSeenAt",
         checkin.itemId
       );
-      pipeline.hincrby(userKey, "numLikes", 1);
-      pipeline.hincrby(locationKey, "numLikes", 1);
+      pipeline.hincrby(userKey, "numVotes", 1);
+      pipeline.hincrby(locationKey, "numVotes", 1);
       pipeline.hincrby(locationKey, "numStars", checkin.starRating);
 
       /* eslint-disable no-await-in-loop */
@@ -80,11 +80,11 @@ const runCheckinProcessor = async () => {
       /* eslint-enable */
 
       // Calculate new averageStars... using the 3rd and 4th response
-      // values from the pipeline (location numLikes and location numStars).
-      const locationNumLikes = responses[2][1];
+      // values from the pipeline (location numVotes and location numStars).
+      const locationNumVotes = responses[2][1];
       const locationNumStars = responses[3][1];
 
-      const newAverageStars = Math.round(locationNumStars / locationNumLikes);
+      const newAverageStars = Math.round(locationNumStars / locationNumVotes);
       lastIdRead = checkin.id;
 
       pipeline = redisClient.pipeline();

@@ -110,7 +110,7 @@ router.get("/users/bycheckins", async (req, res) => {
     redis.getKeyName("usersidx"),
     "*",
     "SORTBY",
-    "numLikes",
+    "numVotes",
     "DESC",
     "LIMIT",
     "0",

@@ -1,8 +1,6 @@
 const config = require("better-config");
 const express = require("express");
 const { body } = require("express-validator");
-const session = require("express-session");
-const RedisStore = require("connect-redis")(session);
 const morgan = require("morgan");
 const cors = require("cors");
 const logger = require("./utils/logger");
@@ -13,6 +11,8 @@ const useAuth = process.argv[2] === "auth";
 config.set(`../${process.env.CRASH_COURSE_CONFIG_FILE || "config.json"}`);
 
 const redis = require("./utils/redisclient");
+const session = require("express-session");
+const RedisStore = require("connect-redis").default;
 
 const redisClient = redis.getClient();
 
@@ -21,15 +21,18 @@ app.use(morgan("combined", { stream: logger.stream }));
 app.use(cors());
 app.use(express.json());
 
+// Initialize store.
+let redisStore = new RedisStore({
+  client: redis.getClient(),
+  prefix: redis.getKeyName(`${config.session.keyPrefix}:`),
+});
+
 if (useAuth) {
   logger.info("Authentication enabled, checkins require a valid user session.");
   app.use(
     session({
       secret: config.session.secret,
-      store: new RedisStore({
-        client: redis.getClient(),
-        prefix: redis.getKeyName(`${config.session.keyPrefix}:`),
-      }),
+      store: redisStore,
       name: config.session.appName,
       resave: false,
       saveUninitialized: true,
@@ -41,7 +44,7 @@ if (useAuth) {
   );
 }
 
-const likesStreamKey = redis.getKeyName("likes");
+const votesStreamKey = redis.getKeyName("votes");
 const maxStreamLength = config.get("checkinReceiver.maxStreamLength");
 
 app.post(
@@ -62,36 +65,20 @@ app.post(
     apiErrorReporter,
   ],
   async (req, res) => {
-    const like = req.body;
+    const vote = req.body;
     const bloomFilterKey = redis.getKeyName("checkinfilter");
-    const likesStr = `${like.userId}:${like.itemId}:${like.starRating}`;
-
-    // Check if we've seen this combination of user, location, star rating before.
-    const likesSeen = await redisClient.call(
-      "BF.EXISTS",
-      bloomFilterKey,
-      likesStr
-    );
-
-    if (likesSeen === 1) {
-      logger.info(
-        `Rejecting checkin for user ${like.userId} at location ${like.itemId} with rating ${like.starRating} - seen before!`
-      );
-      return res
-        .status(422)
-        .send("Multiple identical checkins are not permitted.");
-    }
+    const voteStr = `${vote.userId}:${vote.itemId}:${vote.starRating}`;
 
     const pipeline = redisClient.pipeline();
 
-    pipeline.call("BF.ADD", bloomFilterKey, likesStr);
+    pipeline.call("BF.ADD", bloomFilterKey, voteStr);
     pipeline.xadd(
-      likesStreamKey,
+      votesStreamKey,
       "MAXLEN",
       "~",
       maxStreamLength,
       "*",
-      ...Object.entries(like).flat(),
+      ...Object.entries(vote).flat(),
       (err, result) => {
         if (err) {
           logger.error("Error adding checkin to stream:");
@@ -101,7 +88,6 @@ app.post(
         }
       }
     );
-
     pipeline.exec();
 
     // Accepted, as we'll do later processing on it...
