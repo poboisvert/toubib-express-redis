@@ -155,11 +155,11 @@ const createIndexes = async () => {
   console.log("Dropping any existing indexes, creating new indexes...");
 
   const usersIndexKey = redis.getKeyName("usersidx");
-  const locationsIndexKey = redis.getKeyName("locationsidx");
+  const itemsIndexKey = redis.getKeyName("itemsidx");
 
   const pipeline = redisClient.pipeline();
   pipeline.call("FT.DROPINDEX", usersIndexKey);
-  pipeline.call("FT.DROPINDEX", locationsIndexKey);
+  pipeline.call("FT.DROPINDEX", itemsIndexKey);
   pipeline.call(
     "FT.CREATE",
     usersIndexKey,
@@ -187,12 +187,12 @@ const createIndexes = async () => {
   );
   pipeline.call(
     "FT.CREATE",
-    locationsIndexKey,
+    itemsIndexKey,
     "ON",
     "HASH",
     "PREFIX",
     "1",
-    redis.getKeyName("locations"),
+    redis.getKeyName("items"),
     "SCHEMA",
     "category",
     "TAG",
