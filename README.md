@@ -94,3 +94,4 @@ $ docker exec -it rediscrashcourse redis-cli
 
 - [Item](http://localhost:8081/api/item/1)
 - [Item w detail](http://localhost:8081/api/item/1?withDetails=true)
+- [Item Lastest](http://localhost:8081/api/items/latest)

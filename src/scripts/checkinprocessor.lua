@@ -27,3 +27,4 @@ local locationNumStars = redis.call('hincrby', itemKey, 'numStars', tonumber(che
 -- Calculate and store the location's new average star count.
 local newAverageStars = math.floor((locationNumStars / locationNumLikes) + 0.5)
 redis.call('hset', itemKey, 'averageStars', tonumber(newAverageStars))
+redis.call('hset', itemKey, 'lastUpdated', checkinTimestamp)
