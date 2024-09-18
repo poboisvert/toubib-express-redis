@@ -1,11 +1,31 @@
+"use client";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { inter } from "@/app/ui/fonts";
 import { fetchItems } from "@/app/lib/data";
+import { useEffect, useState } from "react";
 
-// https://www.reddit.com/r/nextjs/comments/18xxlgk/realtime_data_updates/
-export default async function LatestInvoices() {
-  const latestInvoices = await fetchItems();
+export default function LatestInvoices() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchLatestInvoices = async () => {
+      const latestInvoices = await fetchItems();
+
+      console.log("111", latestInvoices);
+      setData(
+        latestInvoices.sort(
+          (a: { numLikes: number }, b: { numLikes: number }) =>
+            b.numLikes - a.numLikes
+        )
+      );
+    };
+
+    fetchLatestInvoices();
+
+    const interval = setInterval(fetchLatestInvoices, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className='flex w-full flex-col md:col-span-4'>
@@ -14,7 +34,7 @@ export default async function LatestInvoices() {
       </h2>
       <div className='flex grow flex-col justify-between rounded-xl bg-gray-50 p-4'>
         <div className='bg-white px-6'>
-          {latestInvoices.map((invoice: any, i: number) => {
+          {data.map((invoice: any, i: number) => {
             // Mapping each category to a generic emoji
             const categoryEmojiMap = {
               cafe: "🍵",

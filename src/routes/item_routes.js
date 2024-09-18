@@ -10,6 +10,22 @@ const redisClient = redis.getClient();
 
 const getWeatherKey = (locationId) => redis.getKeyName("weather", locationId);
 
+// EXERCISE: Get the latest checkin.
+router.get("/items/latest", async (req, res) => {
+  const searchResults = await redis.performSearch(
+    redis.getKeyName("itemsidx"),
+    "*",
+    "SORTBY",
+    "numLikes",
+    "DESC",
+    "LIMIT",
+    "0",
+    "100"
+  );
+  res.status(200).json(searchResults);
+});
+
+
 // Get location by ID, optionally with extra details.
 router.get(
   "/item/:itemId", // Example URL: /item/1?withDetails=true
