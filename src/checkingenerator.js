@@ -13,8 +13,8 @@ const randomInRange = (min, max) =>
 const generateCheckin = async () => {
   const checkin = {
     userId: randomInRange(1, 1000),
-    itemId: randomInRange(1, 20),
-    starRating: randomInRange(0, 5),
+    itemId: randomInRange(1, 4),
+    starRating: randomInRange(0, 20),
   };
 
   const response = await fetch(CHECKIN_RECEIVER_URL, {

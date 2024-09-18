@@ -12,7 +12,6 @@ export default function LatestInvoices() {
     const fetchLatestInvoices = async () => {
       const latestInvoices = await fetchItems();
 
-      console.log("111", latestInvoices);
       setData(
         latestInvoices.sort(
           (a: { numLikes: number }, b: { numLikes: number }) =>
