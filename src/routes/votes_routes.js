@@ -16,12 +16,12 @@ const timestampValidator = (value, { req }) => {
   return true;
 };
 
-const buildCheckinObjects = (likes) => {
+const buildCheckinObjects = (votes) => {
   // Convert XRANGE's array of arrays response to array of objects.
   const response = [];
 
-  for (const like of likes) {
-    const [id, fieldsValues] = like;
+  for (const vote of votes) {
+    const [id, fieldsValues] = vote;
 
     const obj = {
       id,
@@ -38,7 +38,7 @@ const buildCheckinObjects = (likes) => {
 };
 
 router.get(
-  "/likes/:startTime/:endTime",
+  "/votes/:startTime/:endTime",
   [
     param("startTime").isInt({ min: 0 }).custom(timestampValidator),
     param("endTime").isInt({ min: 0 }).custom(timestampValidator),
@@ -46,11 +46,11 @@ router.get(
   ],
   async (req, res) => {
     const { startTime, endTime } = req.params;
-    const likesStreamKey = redis.getKeyName("likes");
+    const votesStreamKey = redis.getKeyName("votes");
 
     // Get maximum 1000 records so we don't create a huge load.
-    const likes = await redisClient.xrange(
-      likesStreamKey,
+    const votes = await redisClient.xrange(
+      votesStreamKey,
       startTime,
       endTime,
       "COUNT",
@@ -58,22 +58,22 @@ router.get(
     );
 
     // Convert array of arrays response to array of objects.
-    const response = buildCheckinObjects(likes);
+    const response = buildCheckinObjects(votes);
 
     res.status(200).json(response);
   }
 );
 
 // EXERCISE: Get the latest checkin.
-router.get("/likes/latest", async (req, res) => {
-  const likesStreamKey = redis.getKeyName("likes");
+router.get("/votes/latest", async (req, res) => {
+  const votesStreamKey = redis.getKeyName("votes");
 
   // TODO: Use the XREVRANGE command to get just the latest
   // (most recent) checkin from the stream whose key is
   // stored in checkinStreamKey.
   // https://redis.io/commands/xrevrange
   const latestCheckin = await redisClient.xrevrange(
-    likesStreamKey,
+    votesStreamKey,
     "+",
     "-",
     "COUNT",

@@ -25,10 +25,6 @@ router.get("/items/latest", async (req, res) => {
   res.status(200).json(searchResults);
 });
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 09c06cc (init)
 // Get location by ID, optionally with extra details.
 router.get(
   "/item/:itemId", // Example URL: /item/1?withDetails=true
