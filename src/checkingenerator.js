@@ -12,8 +12,8 @@ const randomInRange = (min, max) =>
 
 const generateCheckin = async () => {
   const checkin = {
-    userId: randomInRange(1, 1000),
-    itemId: randomInRange(1, 20),
+    userId: randomInRange(1, 5),
+    itemId: randomInRange(1, 25),
     starRating: randomInRange(0, 4),
   };
 

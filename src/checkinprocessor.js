@@ -1,6 +1,23 @@
 const redis = require("./utils/redisclient");
+const { Client } = require("pg");
+
 const logger = require("./utils/logger");
 const sleep = require("./utils/sleep");
+
+// Connect to PostgreSQL
+const pgClient = new Client({
+  connectionString:
+    process.env.POSTGRES_URI ||
+    "postgres://myuser:mypassword@localhost:5432/mydatabase", // Change 'postgres' to 'localhost' to avoid ENOTFOUND error
+});
+
+pgClient
+  .connect()
+  .then(() => logger.info("Connected to PostgreSQL"))
+  .catch((err) => {
+    logger.error("PostgreSQL connection error", err.stack);
+    process.exit(1); // Exit if connection fails
+  });
 
 const runCheckinProcessor = async () => {
   const redisClient = redis.getClient();
@@ -31,17 +48,6 @@ const runCheckinProcessor = async () => {
     );
     /* eslint-enable */
 
-    // If a stream entry was read, response looks like:
-    // [
-    //   [ "ncc:checkins",
-    //     [
-    //       [ "1609602085397-0",
-    //         [ "locationId","171","userId","789","starRating","5" ]
-    //       ]
-    //     ]
-    //   ]
-    // ]
-
     if (response) {
       const checkinData = response[0][1][0];
       const fieldNamesAndValues = checkinData[1];
@@ -57,53 +63,64 @@ const runCheckinProcessor = async () => {
         checkin[k] = v;
       }
 
-      const userKey = redis.getKeyName("users", checkin.userId);
-      const locationKey = redis.getKeyName("items", checkin.itemId);
+      const userId = checkin.userId;
+      const itemId = checkin.itemId;
+      const starRating = checkin.starRating;
 
-      logger.debug(`Updating user ${userKey} and item ${locationKey}.`);
+      logger.debug(`Updating user ${userId} and item ${itemId}.`);
 
-      let pipeline = redisClient.pipeline();
+      try {
+        await pgClient.query("BEGIN");
 
-      pipeline.hset(
-        userKey,
-        "lastCheckin",
-        checkin.timestamp,
-        "lastSeenAt",
-        checkin.itemId
-      );
-      pipeline.hincrby(userKey, "numVotes", 1);
-      pipeline.hincrby(locationKey, "numVotes", 1);
-      pipeline.hincrby(locationKey, "numStars", checkin.starRating);
+        const formattedTimestamp = new Date(parseInt(checkin.timestamp))
+          .toISOString()
+          .slice(0, 23)
+          .replace("T", " ");
 
-      /* eslint-disable no-await-in-loop */
-      const responses = await pipeline.exec();
-      /* eslint-enable */
+        await pgClient.query(
+          `UPDATE users SET lastCheckin = $1, lastSeenAt = $2, numVotes = numVotes + 1 WHERE id = $3`,
+          [formattedTimestamp, formattedTimestamp, userId]
+        );
 
-      // Calculate new averageStars... using the 3rd and 4th response
-      // values from the pipeline (location numVotes and location numStars).
-      const locationNumVotes = responses[2][1];
-      const locationNumStars = responses[3][1];
+        await pgClient.query(
+          `UPDATE items SET numVotes = numVotes + 1, numStars = numStars + $1 WHERE id = $2`,
+          [starRating, itemId]
+        );
 
-      const newAverageStars = Math.round(locationNumStars / locationNumVotes);
+        const { rows } = await pgClient.query(
+          `SELECT numVotes, numStars FROM items WHERE id = $1`,
+          [itemId]
+        );
+
+        const locationNumVotes = rows[0].numvotes;
+        const locationNumStars = rows[0].numstars;
+
+        const newAverageStars = parseFloat(
+          (locationNumStars / locationNumVotes).toFixed(2)
+        );
+
+        await pgClient.query(
+          `UPDATE items SET averagestars = COALESCE(CAST($1 AS FLOAT), 0.0), lastupdated = NOW() WHERE id = $2`,
+          [newAverageStars, itemId]
+        );
+
+        await redisClient.set(checkinProcessorIdKey, lastIdRead);
+        await pgClient.query("COMMIT");
+      } catch (error) {
+        await pgClient.query("ROLLBACK");
+        logger.error(
+          `Error processing checkin ${checkin.id}: ${error.message}`
+        );
+      }
+
       lastIdRead = checkin.id;
-
-      pipeline = redisClient.pipeline();
-      pipeline.hset(locationKey, "averageStars", newAverageStars);
-      pipeline.set(checkinProcessorIdKey, lastIdRead);
-
-      /* eslint-disable no-await-in-loop */
-      await pipeline.exec();
-      /* eslint-enable */
-
       logger.info(`Processed checkin ${checkin.id}.`);
 
-      // Simulate some time consuming "work"...
       if (delay) {
         /* eslint-disable no-await-in-loop */
         await sleep.randomSleep(1, 10);
         /* eslint-enable */
       }
-      /* eslint-enable */
     } else {
       logger.info("Waiting for more checkins...");
     }

@@ -20,7 +20,9 @@ const loadData = async (jsonArray, keyName) => {
   const pipeline = redisClient.pipeline();
 
   for (const obj of jsonArray) {
-    pipeline.hset(redis.getKeyName(keyName, obj.id), obj);
+    const key = redis.getKeyName(keyName, obj.id);
+    pipeline.hset(key, obj);
+    pipeline.expire(key, 600); // Set expiration to 40 minutes (2400 seconds)
   }
 
   const responses = await pipeline.exec();
@@ -71,12 +73,9 @@ const loadDetails = async () => {
   const pipeline = redisClient.pipeline();
 
   for (const detail of locationsJSON.details) {
-    pipeline.call(
-      "JSON.SET",
-      redis.getKeyName("details", detail.id),
-      ".",
-      JSON.stringify(detail)
-    );
+    const key = redis.getKeyName("details", detail.id);
+    pipeline.call("JSON.SET", key, ".", JSON.stringify(detail));
+    pipeline.expire(key, 2400); // Set expiration to 40 minutes (2400 seconds)
   }
 
   const responses = await pipeline.exec();

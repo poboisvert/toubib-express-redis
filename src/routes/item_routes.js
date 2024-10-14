@@ -5,24 +5,67 @@ const logger = require("../utils/logger");
 const redis = require("../utils/redisclient");
 const apiErrorReporter = require("../utils/apierrorreporter");
 
-const CACHE_TIME = 60 * 60; // An hour in seconds.
+const CACHE_TIME = 60; // An hour in seconds.
 const redisClient = redis.getClient();
+
+const pgClient = require("../utils/db"); // Import PostgreSQL client
 
 const getWeatherKey = (locationId) => redis.getKeyName("weather", locationId);
 
-// EXERCISE: Get the latest checkin.
+router.get("/items/stream", (req, res) => {
+  const io = require("socket.io")(res.socket.server);
+
+  // Set max listeners to 20
+  io.setMaxListeners(200);
+
+  io.on("connection", (socket) => {
+    console.log("A client connected");
+
+    const streamItems = async () => {
+      try {
+        const result = await pgClient.query(
+          "SELECT * FROM items ORDER BY lastUpdated DESC"
+        );
+        socket.emit("items", result.rows);
+      } catch (error) {
+        logger.error("Failed to fetch items from SQL", error);
+        socket.emit("error", {
+          message: "Failed to fetch items",
+          error: error.message,
+        });
+      }
+    };
+
+    socket.on("start-stream", () => {
+      // Initial stream
+      streamItems();
+
+      // Set up interval to stream updates every 2 seconds
+      const intervalId = setInterval(streamItems, 2000);
+
+      socket.on("disconnect", () => {
+        console.log("A client disconnected");
+        clearInterval(intervalId);
+        socket.emit("stream-end");
+      });
+    });
+  });
+
+  res.status(200).end();
+});
+
 router.get("/items/latest", async (req, res) => {
-  const searchResults = await redis.performSearch(
-    redis.getKeyName("itemsidx"),
-    "*",
-    "SORTBY",
-    "numVotes",
-    "DESC",
-    "LIMIT",
-    "0",
-    "100"
-  );
-  res.status(200).json(searchResults);
+  try {
+    const result = await pgClient.query(
+      "SELECT * FROM items ORDER BY lastUpdated DESC LIMIT 100"
+    );
+    return res.status(200).json(result.rows);
+  } catch (error) {
+    logger.error("Failed to fetch items from SQL", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch items", error: error.message });
+  }
 });
 
 // Get location by ID, optionally with extra details.
@@ -39,31 +82,46 @@ router.get(
 
     const itemKey = redis.getKeyName("items", itemId);
 
-    const pipeline = redisClient.pipeline();
-    pipeline.hgetall(itemKey);
-
-    if (withDetails) {
-      const detailsKey = redis.getKeyName("details", itemId);
-      pipeline.call("JSON.GET", detailsKey);
+    // Check Redis first
+    const cachedItem = await redisClient.hgetall(itemKey);
+    if (Object.keys(cachedItem).length > 0) {
+      return res.status(200).json(cachedItem);
     }
 
-    const details = await pipeline.exec();
-    const payloadOverview = details[0][1];
-    let response;
+    // If not found in Redis, fetch from PostgreSQL
+    try {
+      const result = await pgClient.query("SELECT * FROM items WHERE id = $1", [
+        itemId,
+      ]);
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: "Item not found" });
+      }
 
-    if (withDetails) {
-      const payloadDetails = JSON.parse(details[1][1]);
-      delete payloadDetails.id;
+      const itemData = result.rows[0];
+      // Create Redis key and save the value as hash
+      await redisClient.hmset(itemKey, itemData);
+      // Set expiration for the Redis key
+      await redisClient.expire(itemKey, 10);
 
-      response = {
-        ...payloadOverview,
-        ...payloadDetails,
-      };
-    } else {
-      response = payloadOverview;
+      let response = itemData;
+
+      if (withDetails) {
+        const detailsKey = redis.getKeyName("details", itemId);
+        const details = await redisClient.call("JSON.GET", detailsKey);
+        const payloadDetails = JSON.parse(details);
+        delete payloadDetails.id;
+
+        response = {
+          ...itemData,
+          ...payloadDetails,
+        };
+      }
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error(`Error fetching item from database: ${error}`);
+      res.status(500).json({ error: "Internal server error" });
     }
-
-    res.status(200).json(response);
   }
 );
 

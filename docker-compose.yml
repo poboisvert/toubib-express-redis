@@ -24,3 +24,41 @@ services:
       - 8081:8081
     environment:
       - CRASH_COURSE_CONFIG_FILE=config_docker.json
+  postgres:
+    container_name: postgrescrashcourse
+    image: "postgres:latest"
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+  sqlpad:
+    image: sqlpad/sqlpad:6
+    depends_on:
+      - postgres
+    hostname: "sqlpad"
+    ports:
+      - "3000:3000"
+    environment:
+      SQLPAD_ADMIN: "admin@admin.com"
+      SQLPAD_AUTH_DISABLED_DEFAULT_ROLE: "admin"
+      SQLPAD_AUTH_DISABLED: "true"
+      SQLPAD_APP_LOG_LEVEL: debug
+      SQLPAD_WEB_LOG_LEVEL: warn
+      SQLPAD_CONNECTIONS__psql__name: psql_conn
+      SQLPAD_CONNECTIONS__psql__driver: postgres
+      SQLPAD_CONNECTIONS__psql__host: postgres
+      SQLPAD_CONNECTIONS__psql__database: mydatabase
+      SQLPAD_CONNECTIONS__psql__username: myuser
+      SQLPAD_CONNECTIONS__psql__password: mypassword
+      SQLPAD_CONNECTIONS__psql__multiStatementTransactionEnabled: "true"
+      SQLPAD_CONNECTIONS__psql__idleTimeoutSeconds: 86400
+volumes:
+  postgres_data:
