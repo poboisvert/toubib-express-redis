@@ -21,9 +21,6 @@ export default function LatestInvoices() {
     };
 
     fetchLatestVotes();
-
-    const interval = setInterval(fetchLatestVotes, 3000);
-    return () => clearInterval(interval);
   }, []);
 
   const Modal = () => {

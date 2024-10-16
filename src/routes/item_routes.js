@@ -12,48 +12,6 @@ const pgClient = require("../utils/db"); // Import PostgreSQL client
 
 const getWeatherKey = (locationId) => redis.getKeyName("weather", locationId);
 
-router.get("/items/stream", (req, res) => {
-  const io = require("socket.io")(res.socket.server);
-
-  // Set max listeners to 20
-  io.setMaxListeners(200);
-
-  io.on("connection", (socket) => {
-    console.log("A client connected");
-
-    const streamItems = async () => {
-      try {
-        const result = await pgClient.query(
-          "SELECT * FROM items ORDER BY lastUpdated DESC"
-        );
-        socket.emit("items", result.rows);
-      } catch (error) {
-        logger.error("Failed to fetch items from SQL", error);
-        socket.emit("error", {
-          message: "Failed to fetch items",
-          error: error.message,
-        });
-      }
-    };
-
-    socket.on("start-stream", () => {
-      // Initial stream
-      streamItems();
-
-      // Set up interval to stream updates every 2 seconds
-      const intervalId = setInterval(streamItems, 2000);
-
-      socket.on("disconnect", () => {
-        console.log("A client disconnected");
-        clearInterval(intervalId);
-        socket.emit("stream-end");
-      });
-    });
-  });
-
-  res.status(200).end();
-});
-
 router.get("/items/latest", async (req, res) => {
   try {
     const result = await pgClient.query(

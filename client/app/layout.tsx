@@ -1,6 +1,5 @@
 import "@/app/ui/global.css";
 import { inter } from "@/app/ui/fonts";
-import { SocketProvider } from "@/app/context/socketprovider";
 
 export default function RootLayout({
   children,
@@ -9,9 +8,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <SocketProvider>
-        <body className={`${inter.className} antialiased`}>{children}</body>
-      </SocketProvider>
+      <body className={`${inter.className} antialiased`}>{children}</body>
     </html>
   );
 }

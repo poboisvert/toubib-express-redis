@@ -3,9 +3,10 @@ import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import styles from "@/app/ui/home.module.css";
 import Image from "next/image";
-import { useSocket } from "@/app/context/socketprovider";
 
 export default function Page() {
+  // useSocket is a custom hook which gives access to sendMessage function and incoming message function
+
   return (
     <main className='flex min-h-screen flex-col p-6'>
       <div className={styles.shape}>

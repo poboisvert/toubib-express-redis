@@ -9,7 +9,7 @@ Before you begin, ensure you have Docker installed on your system. If you haven'
 From the node-js-crash-course directory, start Redis using `docker-compose` (note: use `docker-compose` with the "-", **not** "`docker compose`"):
 
 ```bash
-$ docker-compose up -d
+$ docker-compose up -d or docker compose up --build --wait
 
 Creating network "node-js-crash-course_default" with the default driver
 Creating rediscrashcourse ... done
