@@ -2,7 +2,7 @@
 
 Before you begin, ensure you have Docker installed on your system. If you haven't already, download and install Docker from the official Docker website: <https://www.docker.com/get-docker>
 
-![preview](preview.png)
+![preview](preview.gif)
 
 ### Start Redis (Docker)
 

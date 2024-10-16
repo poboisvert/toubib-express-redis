@@ -3,24 +3,45 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { inter } from "@/app/ui/fonts";
-import { fetchItems } from "@/app/lib/data";
 import { useEffect, useState } from "react";
 
 export default function LatestInvoices() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const fetchLatestVotes = async () => {
-      const latestInvoices = await fetchItems();
-      setData(
-        latestInvoices.sort(
-          (a: { numvotes: number }, b: { numvotes: number }) =>
-            b.numvotes - a.numvotes
-        )
-      );
+    // Create WebSocket connection
+    const newSocket = new WebSocket("ws://localhost:8081");
+
+    // WebSocket event handlers
+    newSocket.onopen = () => {
+      console.log("WebSocket connection established");
     };
 
-    fetchLatestVotes();
+    newSocket.onmessage = (event) => {
+      const messageData = JSON.parse(event.data);
+      // Handle incoming message and update data
+      console.log("Message from server: ", messageData);
+      setData(messageData); // Adjust as necessary based on your message structure
+    };
+
+    // When new data is received from the server
+    newSocket.onmessage = (event) => {
+      const newItems = JSON.parse(event.data);
+      setData(newItems);
+    };
+
+    newSocket.onerror = (error) => {
+      console.error("WebSocket error: ", error);
+    };
+
+    newSocket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    // Cleanup on unmount
+    return () => {
+      newSocket.close();
+    };
   }, []);
 
   const Modal = () => {
@@ -62,6 +83,7 @@ export default function LatestInvoices() {
                 <span className='sr-only'>Close modal</span>
               </button>
             </div>
+
             {/* Modal body */}
             <div className='p-4 md:p-5'>
               <ol className='relative border-s border-gray-200 dark:border-gray-600 ms-3.5 mb-4 md:mb-5'>
@@ -163,7 +185,14 @@ export default function LatestInvoices() {
         throw new Error("Failed to upvote item");
       }
 
-      // Display modal for 2 seconds
+      // Parse the JSON response
+      const data = await response.json();
+
+      // Set the data (assuming setData is defined in your component)
+      setData(data);
+
+      // Optionally display modal or handle UI updates
+      console.log("Upvote successful:", data);
     } catch (error) {
       console.error("Error upvoting item:", error);
     }

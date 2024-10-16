@@ -23,7 +23,6 @@ const runCheckinProcessor = async () => {
   const redisClient = redis.getClient();
   const votesStreamKey = redis.getKeyName("votes");
   const checkinProcessorIdKey = redis.getKeyName("checkinprocessor", "lastid");
-  const delay = process.argv[3] === "delay";
 
   let lastIdRead = await redisClient.get(checkinProcessorIdKey);
   if (lastIdRead == null) {
@@ -104,8 +103,13 @@ const runCheckinProcessor = async () => {
           [newAverageStars, itemId]
         );
 
-        await redisClient.set(checkinProcessorIdKey, lastIdRead);
+        // Update lastIdRead in Redis after processing the check-in
         await pgClient.query("COMMIT");
+        await redisClient.set(checkinProcessorIdKey, checkin.id); // Set lastIdRead to the current check-in ID
+
+        // Publish the notification of completion to the 'checkin-complete' channel
+        const pubChannel = redis.getKeyName("checkin-complete");
+        await redisClient.publish(pubChannel, checkin.id);
       } catch (error) {
         await pgClient.query("ROLLBACK");
         logger.error(
@@ -115,12 +119,6 @@ const runCheckinProcessor = async () => {
 
       lastIdRead = checkin.id;
       logger.info(`Processed checkin ${checkin.id}.`);
-
-      if (delay) {
-        /* eslint-disable no-await-in-loop */
-        await sleep.randomSleep(1, 10);
-        /* eslint-enable */
-      }
     } else {
       logger.info("Waiting for more checkins...");
     }

@@ -23,7 +23,7 @@ const generateCheckin = async () => {
     body: JSON.stringify(checkin),
   });
 
-  if (response.status === 202) {
+  if (response.status === 200) {
     logger.info(
       `Generated checkin for user ${checkin.userId} at location ${checkin.itemId} with vote ${checkin.starRating}.`
     );
@@ -40,7 +40,7 @@ const runCheckinGenerator = async () => {
   while (true) {
     /* eslint-enable */
     /* eslint-disable no-await-in-loop */
-    await sleep.randomSleep(1, 3);
+    await sleep.randomSleep(1, 1);
     await generateCheckin();
     /* estlint-enable */
   }

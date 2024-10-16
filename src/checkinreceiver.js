@@ -7,6 +7,7 @@ const logger = require("./utils/logger");
 const apiErrorReporter = require("./utils/apierrorreporter");
 
 const useAuth = process.argv[2] === "auth";
+const pgClient = require("./utils/db"); // Import PostgreSQL client
 
 config.set(`../${process.env.CRASH_COURSE_CONFIG_FILE || "config.json"}`);
 
@@ -15,6 +16,7 @@ const session = require("express-session");
 const RedisStore = require("connect-redis").default;
 
 const redisClient = redis.getClient();
+const pubsubClient = redis.getClient(); // Separate Redis client for Pub/Sub
 
 const app = express();
 app.use(morgan("combined", { stream: logger.stream }));
@@ -23,7 +25,7 @@ app.use(express.json());
 
 // Initialize store.
 let redisStore = new RedisStore({
-  client: redis.getClient(),
+  client: redisClient,
   prefix: redis.getKeyName(`${config.session.keyPrefix}:`),
 });
 
@@ -66,12 +68,8 @@ app.post(
   ],
   async (req, res) => {
     const vote = req.body;
-    const bloomFilterKey = redis.getKeyName("checkinfilter");
-    const voteStr = `${vote.userId}:${vote.itemId}:${vote.starRating}`;
-
     const pipeline = redisClient.pipeline();
 
-    pipeline.call("BF.ADD", bloomFilterKey, voteStr);
     pipeline.xadd(
       votesStreamKey,
       "MAXLEN",
@@ -85,15 +83,59 @@ app.post(
           logger.error(err);
         } else {
           logger.debug(`Received checkin, added to stream as ${result}`);
+          incomingId = result;
         }
       }
     );
-    pipeline.exec();
 
-    // Accepted, as we'll do later processing on it...
-    return res.status(202).end();
+    await pipeline.exec();
+
+    // Wait for the notification from checkinprocessor.js and fetch the updated data
+    try {
+      const items = await waitForCheckinCompletion();
+      return res.status(200).json(items);
+    } catch (error) {
+      logger.error("Error fetching new data:", error);
+      return res.status(500).send("Internal Server Error");
+    }
   }
 );
+
+// Pub/Sub based function to fetch new data when notified by checkinprocessor.js
+async function waitForCheckinCompletion() {
+  return new Promise((resolve, reject) => {
+    const pubChannel = redis.getKeyName("checkin-complete");
+
+    // Subscribe to the Redis channel
+    pubsubClient.subscribe(pubChannel);
+
+    // Listen for published messages
+    pubsubClient.on("message", async (channel, message) => {
+      console.log("message", message);
+      console.log("channel", channel);
+      console.log("pubChannel", pubChannel);
+      if (message === result) {
+        try {
+          // Fetch data from PostgreSQL when notification is received
+          const result = await pgClient.query(
+            "SELECT * FROM items ORDER BY numvotes DESC LIMIT 100"
+          );
+          resolve(result.rows);
+        } catch (error) {
+          reject(error);
+        } finally {
+          // Unsubscribe after receiving the message to prevent multiple triggers
+          pubsubClient.unsubscribe(pubChannel);
+        }
+      }
+    });
+
+    // Handle errors in Redis Pub/Sub
+    pubsubClient.on("error", (err) => {
+      reject(err);
+    });
+  });
+}
 
 const port = config.get("checkinReceiver.port");
 app.listen(port, () => {
